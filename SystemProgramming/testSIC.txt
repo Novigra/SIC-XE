@@ -1,0 +1,47 @@
+/*FILE JUST USED TO GET THE ADDRESS CODE AND VISUALIZE THE PROCESS*/
+COPY START 0        
+FIRST STL RETADR  //0                                   A = 10
+LDB #LENGTH  //3                                        B = 11                            0110 /10 01/0010 /0000 /0010 /1101
+BASE LENGTH  //6                                        C = 12
+CLOOP +JSUB RDREC //6                                   D = 13
+LDA LENGTH   //A                                        E = 14
+COMP #0      //D                    290000                    F = 15                       0010 /10 01/0000 /0000 /0000 /0000
+JEQ ENDFIL   //10
++JSUB WRREC  //13
+J CLOOP      //17                                       lENGTH = 1078-0 = 1078
+ENDFIL LDA EOF //1A
+STA BUFFER     //1D
+LDA #3         //20
+STA LENGTH     //23
++JSUB WRREC    //26
+J @RETADR      //2A                3e2003                                                   0011/11 10/0010 /0000 /0000 /0011
+EOF BYTE C'EOF' //2D
+RETADR RESW 1   //30
+LENGTH RESW 1   //33
+BUFFER RESB 4096 //36
+RDREC CLEAR X    //1036
+CLEAR A          //1038
+CLEAR S          //103A
++LDT #4096       //103C
+RLOOP TD INPUT   //1040
+JEQ RLOOP        //1043
+RD INPUT         //1046
+COMPR A,S        //1049
+JEQ EXIT         //104B
+STCH BUFFER,X    //104E
+TIXR T           //1051
+JLT RLOOP        //1053
+EXIT STX LENGTH  //1056
+RSUB             //1059
+INPUT BYTE X'F1' //105C
+WRREC CLEAR X    //105D
+LDT LENGTH       //105F
+WLOOP TD OUTPUT  //1062
+JEQ WLOOP        //1065
+LDCH BUFFER,X    //1068
+WD OUTPUT        //106B
+TIXR T           //106E
+JLT WLOOP        //1070
+RSUB             //1073
+OUTPUT BYTE X'05' //1076
+END FIRST         //1077
