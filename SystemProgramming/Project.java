@@ -413,7 +413,7 @@ public class Project extends Variables
             {
                 opcode = converter.GetOPCODE(Inst[j]);
 
-                String s [] = Ref[i].split(",");
+                String s [] = Ref[j].split(",");
                 
                 for (i = 0 ; i < s.length ; i++)
                 {
@@ -422,27 +422,27 @@ public class Project extends Variables
 
                 for (i = 0 ; i < s.length ; i++)
                 {
-                    if (Ref[j].equals("A"))
+                    if (register[i].equals("A"))
                     {
                         register[i] = "0";
                     }
-                    if (Ref[j].equals("X"))
+                    if (register[i].equals("X"))
                     {
                         register[i] = "1";
                     }
-                    if (Ref[j].equals("B"))
+                    if (register[i].equals("B"))
                     {
                         register[i] = "4";
                     }
-                    if (Ref[j].equals("S"))
+                    if (register[i].equals("S"))
                     {
                         register[i] = "5";
                     }     
-                    if (Ref[j].equals("T"))
+                    if (register[i].equals("T"))
                     {
                         register[i] = "6";
                     }  
-                    if (Ref[j].equals("F"))
+                    if (register[i].equals("F"))
                     {
                         register[i] = "7";
                     }      
@@ -474,26 +474,39 @@ public class Project extends Variables
             /*----------------BYTE------------------*/
             else if (Inst[j].equals("BYTE"))
             {
-                String ins = Ref[j];
-                ins = ins.substring(1);
-                ins = ins.replace("'", "");
-
-                String letters = ins;
-                int ascii;
-                String code = "";
-                for (i = 0 ; i < letters.length() ; i++)
+                pattern = Pattern.compile("C");
+                matcher = pattern.matcher(Ref[j]);
+                if (matcher.find())
                 {
-                    ascii = letters.charAt(i);
-                    code = code + ascii;
-                }
+                    String ins = Ref[j];
+                    ins = ins.substring(1);
+                    ins = ins.replace("'", "");
 
-                while (code.length() < 6) 
-                {
-                    code = zero + code;
+                    String letters = ins;
+                    int ascii;
+                    String code = "";
+                    for (i = 0 ; i < letters.length() ; i++)
+                    {
+                        ascii = letters.charAt(i);
+                        code = code + ascii;
+                    }
+
+                    while (code.length() < 6) 
+                    {
+                        code = zero + code;
+                    }
+                    //System.out.println("Instruction : " + Inst[j]); // For Debugging Testing
+                    ObjectCode[j] = code;
+                    //System.out.println("Object Code : " + ObjectCode[j]); // For Debugging Testing
                 }
-                //System.out.println("Instruction : " + Inst[j]); // For Debugging Testing
-                ObjectCode[j] = code;
-                //System.out.println("Object Code : " + ObjectCode[j]); // For Debugging Testing
+                else
+                {
+                    String ins = Ref[j];
+                    ins = ins.substring(1);
+                    ins = ins.replace("'", "");
+                    ObjectCode[j] = ins;
+                }
+                
             }
 
             /*----------------WORD------------------*/
@@ -800,7 +813,7 @@ public class Project extends Variables
         }
 
         finalCode = opcodeBi + N + I + X + B + P + E + disBi;
-        System.out.println("Instruction : " + Inst[j]);
+        //System.out.println("Instruction : " + Inst[j]);
         //System.out.println("code in Binary : " + finalCode); // For Debugging Testing
         num = Integer.parseInt(finalCode, 2);
         ObjectCode[j] = Integer.toHexString(num);
